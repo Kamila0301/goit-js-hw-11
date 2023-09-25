@@ -24,21 +24,26 @@ async function onSubmit(event) {
   page = 1;
   galleryEl.innerHTML = '';
   btnLoadMore.style.display = 'none';
-  const value = inputEl.value;
+  const value = inputEl.value.trim();
+
+  if (!value) {
+    return Notiflix.Notify.failure('Please enter a search request.');
+  } else {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+
   try {
     const data = await searchPhoto(value);
 
-    if (data.searchQuery === '') {
-      return Notiflix.Notify.failure('Please enter a search request.');
-    } else {
-      arrPhoto(data.hits);
-      totalHits = data.totalHits;
+    arrPhoto(data.hits);
+    totalHits = data.totalHits;
 
-      if (page * PER_PAGE < totalHits) {
-        btnLoadMore.style.display = 'block';
-      } else {
-        showFailure();
-      }
+    if (page * PER_PAGE < totalHits) {
+      btnLoadMore.style.display = 'block';
+    } else {
+      showFailure();
     }
 
     page += 1;
@@ -50,26 +55,32 @@ async function onSubmit(event) {
 }
 
 async function onLoadMore() {
+  if (!value) {
+    return Notiflix.Notify.failure('Please enter a search request.');
+  } else {
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
+  }
+
   try {
     const value = inputEl.value;
     const data = await searchPhoto(value);
 
-    if (data.searchQuery === '') {
-      return Notiflix.Notify.failure('Please enter a search request.');
-    } else {
-      arrPhoto(data.hits);
-      totalHits = data.totalHits;
+    arrPhoto(data.hits);
+    totalHits = data.totalHits;
 
-      if (page * PER_PAGE < totalHits) {
-        btnLoadMore.style.display = 'block';
-      } else {
-        showFailure();
-      }
+    if (page * PER_PAGE < totalHits) {
+      btnLoadMore.style.display = 'block';
+    } else {
+      showFailure();
     }
 
     page += 1;
   } catch (error) {
-    showFailure();
+    Notiflix.Notify.failure(
+      'Sorry, there are no images matching your search query. Please try again.'
+    );
   }
 }
 
@@ -99,7 +110,7 @@ function arrPhoto(elements) {
         downloads,
       }) => `
     <div class="photo-card">
-  <img src="${webformatURL}" alt="${tags}" loading="lazy" />
+  <img src="${webformatURL}" alt="${tags}" loading="lazy" width=300px />
   <div class="info">
     <p class="info-item">
       <b>Likes ${likes}</b>
